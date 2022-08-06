@@ -125,7 +125,7 @@ data class Track(
   val contentAdvisoryRating: String?,
 
   @field:SerializedName("trackRentalPrice")
-  val trackRentalPrice: Double
-) {
+  val trackRentalPrice: Double,
+
   var isPlaying: Boolean = false
-}
+)

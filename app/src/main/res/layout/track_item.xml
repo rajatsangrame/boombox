@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    >
+
+  <ImageView
+      android:id="@+id/iv_image"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:adjustViewBounds="true"
+      android:scaleType="centerCrop"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"
+      app:layout_constraintVertical_bias="0.34"
+      tools:src="@color/cardBackground"
+      />
+
+  <ImageView
+      android:layout_width="0dp"
+      android:layout_height="0dp"
+      android:adjustViewBounds="true"
+      android:src="@drawable/shader_bottom"
+      app:layout_constraintBottom_toBottomOf="@id/iv_image"
+      app:layout_constraintEnd_toEndOf="@+id/iv_image"
+      app:layout_constraintStart_toStartOf="@id/iv_image"
+      app:layout_constraintTop_toTopOf="@+id/iv_image"
+      />
+
+  <ImageView
+      android:id="@+id/btn_play"
+      android:layout_width="@dimen/btn_play"
+      android:layout_height="@dimen/btn_play"
+      android:layout_marginEnd="@dimen/margin_normal"
+      app:layout_constraintBottom_toBottomOf="@+id/tv_artist"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toEndOf="@+id/tv_title"
+      tools:src="@drawable/ic_play"
+      />
+
+  <TextView
+      android:id="@+id/tv_title"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="@dimen/margin_normal"
+      android:ellipsize="end"
+      android:maxLines="1"
+      android:textColor="@color/colorWhite"
+      android:textSize="@dimen/text_normal"
+      app:layout_constraintBottom_toTopOf="@+id/tv_artist"
+      app:layout_constraintEnd_toStartOf="@+id/btn_play"
+      app:layout_constraintStart_toStartOf="@+id/iv_image"
+      tools:text="@string/sample_track"
+      />
+
+  <TextView
+      android:id="@+id/tv_artist"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginBottom="@dimen/margin_normal"
+      android:layout_marginStart="@dimen/margin_normal"
+      android:textColor="@color/colorWhite"
+      android:textSize="@dimen/text_small"
+      app:layout_constraintBottom_toBottomOf="@+id/iv_image"
+      app:layout_constraintEnd_toStartOf="@+id/btn_play"
+      app:layout_constraintHorizontal_bias="0.0"
+      app:layout_constraintStart_toStartOf="parent"
+      tools:text="@string/sample_artist"
+      />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,4 +7,16 @@
   <color name="teal_700">#FF018786</color>
   <color name="black">#FF000000</color>
   <color name="white">#FFFFFFFF</color>
+
+
+  <color name="colorWhite">#F5F5F5</color>
+  <color name="colorTextPrimary">#ffffff</color>
+  <color name="colorTextSecondary">#000000</color>
+  <color name="cardBackground">#ddd</color>
+  <color name="gradientStart">#7f000000</color>
+  <color name="gradientEnd">#00000000</color>
+  <color name="optionItemTintColor">#ad000000</color>
+  <color name="colorGrey">#9E9E9E</color>
+  <color name="colorRed">#ef5350</color>
+  <color name="colorGreen">#66bb6a</color>
 </resources>
