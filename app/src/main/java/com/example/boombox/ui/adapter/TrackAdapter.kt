@@ -8,9 +8,11 @@ import com.example.boombox.R
 import com.example.boombox.data.model.Track
 import com.example.boombox.databinding.TrackItemBinding
 import com.example.boombox.extension.loadImage
+import com.example.boombox.media.AudioPlayerManager
 
 class TrackAdapter(
   private var trackList: List<Track> = ArrayList(),
+  private val audioPlayerManager: AudioPlayerManager,
   private val listener: (Track) -> Unit
 ) :
   RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
@@ -47,7 +49,7 @@ class TrackAdapter(
 
     fun bind(track: Track) {
       val context = itemView.context
-      val drawable = if (!track.isPlaying) {
+      val drawable = if (!audioPlayerManager.isPlayingSameTrack(track.trackId)) {
         ContextCompat.getDrawable(context, R.drawable.ic_play)
       } else {
         ContextCompat.getDrawable(context, R.drawable.ic_stop)

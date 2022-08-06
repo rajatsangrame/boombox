@@ -1,5 +1,7 @@
 package com.example.boombox.data.model
 
+import com.example.boombox.media.AudioPlayerManager
+import com.example.boombox.media.AudioPlayerManager.Media
 import com.google.gson.annotations.SerializedName
 
 data class Track(
@@ -125,7 +127,16 @@ data class Track(
   val contentAdvisoryRating: String?,
 
   @field:SerializedName("trackRentalPrice")
-  val trackRentalPrice: Double,
+  val trackRentalPrice: Double
+) {
 
-  var isPlaying: Boolean = false
-)
+  fun toMedia() = Media(
+    id = this.trackId,
+    name = this.trackName!!,
+    remoteUrl = this.previewUrl!!,
+    localUrl = null,
+    cacheKey = this.trackId.toString(),
+    isPausedByUser = false,
+    isFinished = false
+  )
+}

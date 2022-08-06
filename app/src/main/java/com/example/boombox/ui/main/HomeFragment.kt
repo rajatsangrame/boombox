@@ -2,12 +2,13 @@ package com.example.boombox.ui.main
 
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.boombox.R
+import com.example.boombox.data.model.Track
 import com.example.boombox.databinding.HomeFragmentBinding
+import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.ui.adapter.TrackAdapter
 import com.example.boombox.util.GridItemDecorator
 import dagger.hilt.android.AndroidEntryPoint
@@ -19,6 +20,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
   private val mainViewModel by activityViewModels<MainViewModel>()
   private lateinit var binding: HomeFragmentBinding
   private lateinit var trackAdapter: TrackAdapter
+  @Inject lateinit var audioPlayerManager: AudioPlayerManager
 
   override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
     super.onViewCreated(view, savedInstanceState)
@@ -34,9 +36,10 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
   }
 
   private fun setupRecyclerView() {
-    trackAdapter = TrackAdapter(ArrayList()) { track ->
-      Toast.makeText(requireContext(), track.artistName, Toast.LENGTH_SHORT).show()
-    }
+    trackAdapter =
+      TrackAdapter(trackList = ArrayList(), audioPlayerManager = audioPlayerManager) { track ->
+        handlePlayback(track)
+      }
     binding.rvTracks.apply {
       layoutManager = GridLayoutManager(context, 2)
       addItemDecoration(GridItemDecorator(2, 50, true))
@@ -50,5 +53,15 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         trackAdapter.setList(it)
       }
     })
+  }
+
+  private fun handlePlayback(track: Track) {
+    if (!audioPlayerManager.isPlayingSameTrack(track.trackId)) {
+      audioPlayerManager.setMedia(track.toMedia())
+      audioPlayerManager.initAndPlay()
+    } else {
+      audioPlayerManager.pause()
+    }
+    trackAdapter.notifyDataSetChanged()
   }
 }
