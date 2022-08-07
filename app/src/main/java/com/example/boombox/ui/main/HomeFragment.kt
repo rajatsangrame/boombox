@@ -1,7 +1,10 @@
 package com.example.boombox.ui.main
 
 import android.os.Bundle
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
+import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -44,9 +47,15 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
 
   private fun setupRecyclerView() {
     trackAdapter =
-      TrackAdapter(trackList = ArrayList(), audioPlayerManager = audioPlayerManager) { track ->
-        handlePlayback(track)
-      }
+      TrackAdapter(
+        trackList = ArrayList(),
+        audioPlayerManager = audioPlayerManager,
+        listener = { track ->
+          handlePlayback(track)
+        },
+        menuClickListener = { track, view ->
+          createOptionMenu(track, view)
+        })
     binding.rvTracks.apply {
       layoutManager = GridLayoutManager(context, 2)
       addItemDecoration(GridItemDecorator(2, 32, true))
@@ -60,6 +69,22 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
         trackAdapter.setList(it)
       }
     })
+  }
+
+  private fun createOptionMenu(track: Track, view: View) {
+    val popup = PopupMenu(requireContext(), view)
+    val inflater: MenuInflater = popup.menuInflater
+    inflater.inflate(R.menu.menu_track, popup.menu)
+    popup.show()
+    popup.setOnMenuItemClickListener {
+      when (it.itemId) {
+        R.id.add_to_playlist -> {
+
+          return@setOnMenuItemClickListener false
+        }
+      }
+      return@setOnMenuItemClickListener false
+    }
   }
 
   private fun handlePlayback(track: Track) {

@@ -1,6 +1,7 @@
 package com.example.boombox.ui.adapter
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +14,8 @@ import com.example.boombox.media.AudioPlayerManager
 class TrackAdapter(
   private var trackList: List<Track> = ArrayList(),
   private val audioPlayerManager: AudioPlayerManager,
-  private val listener: (Track) -> Unit
+  private val listener: (Track) -> Unit,
+  private val menuClickListener: (Track, View) -> Unit
 ) :
   RecyclerView.Adapter<TrackAdapter.ViewHolder>() {
 
@@ -44,6 +46,9 @@ class TrackAdapter(
     init {
       binding.btnPlay.setOnClickListener {
         listener(trackList[adapterPosition])
+      }
+      binding.ivMenu.setOnClickListener {
+        menuClickListener(trackList[adapterPosition], binding.ivMenu)
       }
     }
 
