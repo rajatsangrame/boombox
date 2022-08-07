@@ -39,6 +39,12 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
 
   companion object {
     private const val TAG = "AudioPlayerManager"
+    const val STATE_IDLE = Player.STATE_IDLE //-> 1
+    const val STATE_BUFFERING = Player.STATE_BUFFERING //-> 2
+    const val STATE_READY = Player.STATE_READY //-> 3
+    const val STATE_ENDED = Player.STATE_ENDED //-> 4
+    const val STATE_PLAY = 5
+    const val STATE_PAUSE = 6
   }
 
   fun setMedia(media: Media) {
@@ -93,15 +99,16 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
 
   fun isPlayingSameTrack(id: Int) = currentMedia?.id == id
 
+  fun isPausedByUser() = currentMedia?.isPausedByUser ?: false
+
   fun play() {
-    currentMedia?.isFinished = false
-    currentMedia?.isPausedByUser = false
+    currentMedia?.state?.invoke(STATE_PLAY)
     player?.playWhenReady = true
   }
 
   fun pause() {
-    currentMedia?.isFinished = false
     currentMedia?.isPausedByUser = true
+    currentMedia?.state?.invoke(STATE_PAUSE)
     player?.playWhenReady = false
   }
 
@@ -208,6 +215,7 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
+
     }
 
     override fun onPositionDiscontinuity(reason: Int) {
@@ -221,13 +229,7 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
       playWhenReady: Boolean,
       playbackState: Int
     ) {
-      Log.d(TAG, "eventListener: onPlayerStateChanged: ")
-      if (playbackState == Player.STATE_BUFFERING) {
-      } else {
-      }
-      if (playbackState == Player.STATE_ENDED) {
-        Log.d(TAG, "eventListener: onPlayerStateChanged: Player.STATE_ENDED")
-      }
+      currentMedia?.state?.invoke(playbackState)
     }
   }
 
@@ -237,8 +239,8 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     val localUrl: String?,
     val remoteUrl: String,
     val cacheKey: String,
+    var isFinished: Boolean,
     var isPausedByUser: Boolean,
-    var isFinished: Boolean
+    val state: (Int) -> Unit
   )
-
 }

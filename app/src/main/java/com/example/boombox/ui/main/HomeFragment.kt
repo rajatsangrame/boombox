@@ -12,6 +12,7 @@ import com.example.boombox.databinding.HomeFragmentBinding
 import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.ui.adapter.TrackAdapter
 import com.example.boombox.util.GridItemDecorator
+import com.google.android.exoplayer2.Player
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -62,11 +63,24 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
   }
 
   private fun handlePlayback(track: Track) {
-    if (!audioPlayerManager.isPlayingSameTrack(track.trackId)) {
-      audioPlayerManager.setMedia(track.toMedia())
+    val isCurrentTrack = audioPlayerManager.isPlayingSameTrack(track.trackId)
+    if (!isCurrentTrack) {
+      audioPlayerManager.setMedia(track.toMedia {
+        when (it) {
+          Player.STATE_ENDED -> {
+            track.isPlaying = false
+            trackAdapter.notifyDataSetChanged()
+          }
+        }
+      })
       audioPlayerManager.initAndPlay()
+      track.isPlaying = true
+    } else if (isCurrentTrack && audioPlayerManager.isPausedByUser()) {
+      audioPlayerManager.play()
+      track.isPlaying = true
     } else {
       audioPlayerManager.pause()
+      track.isPlaying = false
     }
     trackAdapter.notifyDataSetChanged()
   }

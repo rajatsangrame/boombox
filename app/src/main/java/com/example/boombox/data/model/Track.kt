@@ -126,16 +126,19 @@ data class Track(
   val contentAdvisoryRating: String?,
 
   @field:SerializedName("trackRentalPrice")
-  val trackRentalPrice: Double
+  val trackRentalPrice: Double,
+
+  var isPlaying: Boolean = false
 ) {
 
-  fun toMedia() = Media(
+  fun toMedia(state: (Int) -> Unit) = Media(
     id = this.trackId,
     name = this.trackName!!,
     remoteUrl = this.previewUrl!!,
     localUrl = null,
     cacheKey = this.trackId.toString(),
     isPausedByUser = false,
-    isFinished = false
+    isFinished = false,
+    state = state
   )
 }

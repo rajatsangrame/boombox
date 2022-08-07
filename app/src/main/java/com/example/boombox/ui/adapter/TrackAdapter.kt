@@ -49,7 +49,8 @@ class TrackAdapter(
 
     fun bind(track: Track) {
       val context = itemView.context
-      val drawable = if (!audioPlayerManager.isPlayingSameTrack(track.trackId)) {
+      val isCurrentTrack = audioPlayerManager.isPlayingSameTrack(track.trackId)
+      val drawable = if (!isCurrentTrack || (isCurrentTrack && !track.isPlaying)) {
         ContextCompat.getDrawable(context, R.drawable.ic_play)
       } else {
         ContextCompat.getDrawable(context, R.drawable.ic_stop)
@@ -58,7 +59,6 @@ class TrackAdapter(
       binding.btnPlay.setImageDrawable(drawable)
       binding.tvTitle.text = track.trackName
       binding.tvArtist.text = track.artistName
-
     }
   }
 
