@@ -1,6 +1,5 @@
 package com.example.boombox.data.model
 
-import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.media.AudioPlayerManager.Media
 import com.google.gson.annotations.SerializedName
 

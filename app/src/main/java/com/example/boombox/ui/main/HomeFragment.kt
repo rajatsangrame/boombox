@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.boombox.R
 import com.example.boombox.data.model.Track
@@ -12,6 +13,7 @@ import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.ui.adapter.TrackAdapter
 import com.example.boombox.util.GridItemDecorator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -27,12 +29,16 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     binding = HomeFragmentBinding.bind(view)
 
     setupUI()
-    mainViewModel.search()
+    fetchData()
   }
 
   private fun setupUI() {
     setupRecyclerView()
     setupObserver()
+  }
+
+  private fun fetchData() {
+    mainViewModel.search()
   }
 
   private fun setupRecyclerView() {
@@ -42,7 +48,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
       }
     binding.rvTracks.apply {
       layoutManager = GridLayoutManager(context, 2)
-      addItemDecoration(GridItemDecorator(2, 50, true))
+      addItemDecoration(GridItemDecorator(2, 32, true))
       adapter = trackAdapter
     }
   }
