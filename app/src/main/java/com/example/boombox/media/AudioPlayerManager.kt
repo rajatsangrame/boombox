@@ -101,6 +101,8 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
 
   fun isPausedByUser() = currentMedia?.isPausedByUser ?: false
 
+  fun isPlaying() = player?.isPlaying ?: false
+
   fun play() {
     currentMedia?.state?.invoke(STATE_PLAY)
     player?.playWhenReady = true
@@ -161,6 +163,7 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
   private fun stop() {
     player?.stop()
     releasePlayer()
+    currentMedia = null
   }
 
   private fun releasePlayer() {
@@ -215,7 +218,8 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     }
 
     override fun onIsPlayingChanged(isPlaying: Boolean) {
-
+      val state = if (isPlaying) STATE_PLAY else STATE_PAUSE
+      currentMedia?.state?.invoke(state)
     }
 
     override fun onPositionDiscontinuity(reason: Int) {

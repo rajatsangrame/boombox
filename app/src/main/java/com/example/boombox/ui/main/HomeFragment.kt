@@ -92,15 +92,18 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     if (!isCurrentTrack) {
       audioPlayerManager.setMedia(track.toMedia {
         when (it) {
-          Player.STATE_ENDED -> {
+          AudioPlayerManager.STATE_PAUSE -> {
             track.isPlaying = false
-            trackAdapter.notifyDataSetChanged()
+          }
+          AudioPlayerManager.STATE_PLAY -> {
+            track.isPlaying = true
           }
         }
+        trackAdapter.notifyDataSetChanged()
       })
       audioPlayerManager.initAndPlay()
       track.isPlaying = true
-    } else if (isCurrentTrack && audioPlayerManager.isPausedByUser()) {
+    } else if (isCurrentTrack && (audioPlayerManager.isPausedByUser() || !audioPlayerManager.isPlaying())) {
       audioPlayerManager.play()
       track.isPlaying = true
     } else {
