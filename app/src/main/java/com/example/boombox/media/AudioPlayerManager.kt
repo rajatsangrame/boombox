@@ -99,7 +99,6 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
 
   fun isPlayingSameTrack(id: Int) = currentMedia?.id == id
 
-  fun isPausedByUser() = currentMedia?.isPausedByUser ?: false
 
   fun isPlaying() = player?.isPlaying ?: false
 
@@ -109,7 +108,6 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
   }
 
   fun pause() {
-    currentMedia?.isPausedByUser = true
     currentMedia?.state?.invoke(STATE_PAUSE)
     player?.playWhenReady = false
   }
@@ -163,7 +161,6 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
   private fun stop() {
     player?.stop()
     releasePlayer()
-    currentMedia = null
   }
 
   private fun releasePlayer() {
@@ -244,7 +241,6 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     val remoteUrl: String,
     val cacheKey: String,
     var isFinished: Boolean,
-    var isPausedByUser: Boolean,
     val state: (Int) -> Unit
   )
 }

@@ -137,7 +137,6 @@ data class Track(
     remoteUrl = this.previewUrl!!,
     localUrl = null,
     cacheKey = this.trackId.toString(),
-    isPausedByUser = false,
     isFinished = false,
     state = state
   )

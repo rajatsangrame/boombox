@@ -103,7 +103,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
       })
       audioPlayerManager.initAndPlay()
       track.isPlaying = true
-    } else if (isCurrentTrack && (audioPlayerManager.isPausedByUser() || !audioPlayerManager.isPlaying())) {
+    } else if (isCurrentTrack && ( !audioPlayerManager.isPlaying())) {
       audioPlayerManager.play()
       track.isPlaying = true
     } else {
