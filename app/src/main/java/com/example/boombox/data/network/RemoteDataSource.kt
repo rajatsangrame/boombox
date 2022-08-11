@@ -11,16 +11,27 @@ import javax.inject.Inject
 
 class RemoteDataSource @Inject constructor() {
   companion object {
-    const val BASE_URL: String = "https://itunes.apple.com/"
+    const val TRACK_BASE_URL: String = "https://itunes.apple.com/"
+    const val VIDEO_BASE_URL: String = "https://api.pexels.com/videos/"
+
   }
 
-  fun buildBoomboxApi(): BoomboxApi {
+  fun buildTracksApi(): TracksApi {
     return Retrofit.Builder()
-      .baseUrl(BASE_URL)
+      .baseUrl(TRACK_BASE_URL)
       .client(getRetrofitClient())
       .addConverterFactory(GsonConverterFactory.create())
       .build()
-      .create(BoomboxApi::class.java)
+      .create(TracksApi::class.java)
+  }
+
+  fun buildVideoTracksApi(): TracksApi {
+    return Retrofit.Builder()
+      .baseUrl(VIDEO_BASE_URL)
+      .client(getRetrofitClient())
+      .addConverterFactory(GsonConverterFactory.create())
+      .build()
+      .create(TracksApi::class.java)
   }
 
   private fun getRetrofitClient(

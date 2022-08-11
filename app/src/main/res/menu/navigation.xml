@@ -1,10 +1,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
   <item
-      android:id="@+id/navigation_home"
-      android:title="@string/home" />
+      android:id="@+id/navigation_audio"
+      android:title="@string/audio" />
 
   <item
-      android:id="@+id/navigation_saved"
-      android:title="@string/saved" />
+      android:id="@+id/navigation_video"
+      android:title="@string/video" />
 </menu>

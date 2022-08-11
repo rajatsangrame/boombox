@@ -1,8 +1,9 @@
 <resources>
   <string name="app_name">Boom Box</string>
 
-  <string name="saved">Saved</string>
-  <string name="home">Home</string>
+  <string name="video">Video</string>
+  <string name="audio">Audio</string>
+  <string name="add_to_playlist">Add To Playlist</string>
   <string name="search_et_hint">Search for songs, artists, album..</string>
   <string name="sample_track">Castle On The Hill</string>
   <string name="sample_artist">Ed Sheeran</string>

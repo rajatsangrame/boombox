@@ -1,44 +1,36 @@
 package com.example.boombox.ui.main
 
-import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.boombox.R
 import com.example.boombox.data.model.Track
-import com.example.boombox.databinding.HomeFragmentBinding
+import com.example.boombox.databinding.AudioFragmentBinding
 import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.ui.adapter.TrackAdapter
+import com.example.boombox.ui.base.BaseFragment
 import com.example.boombox.util.GridItemDecorator
-import com.google.android.exoplayer2.Player
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class HomeFragment : Fragment(R.layout.home_fragment) {
+class AudioFragment : BaseFragment<AudioFragmentBinding>() {
 
   private val mainViewModel by activityViewModels<MainViewModel>()
-  private lateinit var binding: HomeFragmentBinding
   private lateinit var trackAdapter: TrackAdapter
   @Inject lateinit var audioPlayerManager: AudioPlayerManager
 
-  override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-    super.onViewCreated(view, savedInstanceState)
-    binding = HomeFragmentBinding.bind(view)
-
-    setupUI()
+  override fun setupView() {
+    setupRecyclerView()
+    setupObserver()
     fetchData()
   }
 
-  private fun setupUI() {
-    setupRecyclerView()
-    setupObserver()
+  override fun getViewBinding(inflater: LayoutInflater): AudioFragmentBinding {
+    return AudioFragmentBinding.inflate(inflater)
   }
 
   private fun fetchData() {
@@ -63,7 +55,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
     }
   }
 
-  private fun setupObserver() {
+  override fun setupObserver() {
     mainViewModel.getTracks().observe(this, {
       it?.let {
         trackAdapter.setList(it)
@@ -103,7 +95,7 @@ class HomeFragment : Fragment(R.layout.home_fragment) {
       })
       audioPlayerManager.initAndPlay()
       track.isPlaying = true
-    } else if (isCurrentTrack && ( !audioPlayerManager.isPlaying())) {
+    } else if (isCurrentTrack && (!audioPlayerManager.isPlaying())) {
       audioPlayerManager.play()
       track.isPlaying = true
     } else {

@@ -1,7 +1,6 @@
 package com.example.boombox.di
 
 import android.content.Context
-import com.example.boombox.data.network.BoomboxApi
 import com.example.boombox.data.network.BoomboxRepository
 import com.example.boombox.data.network.RemoteDataSource
 import com.example.boombox.media.AudioPlayerManager
@@ -17,7 +16,7 @@ object AppModule {
 
   @Provides
   fun provideBoomboxApi(dataSource: RemoteDataSource): BoomboxRepository {
-    return BoomboxRepository(dataSource.buildBoomboxApi())
+    return BoomboxRepository(dataSource.buildTracksApi())
   }
 
   @Provides

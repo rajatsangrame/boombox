@@ -2,6 +2,7 @@ package com.example.boombox.ui.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
@@ -18,7 +19,7 @@ class MainActivity : AppCompatActivity() {
   private lateinit var binding: ActivityMainBinding
   private var currentFragmentId = 0
 
-  private val fragmentList = arrayListOf(HomeFragment(), SavedFragment())
+  private val fragmentList = arrayListOf(AudioFragment(), VideoFragment())
 
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
@@ -37,10 +38,10 @@ class MainActivity : AppCompatActivity() {
       }
       currentFragmentId = menuItem.itemId
       when (menuItem.itemId) {
-        R.id.navigation_home -> {
+        R.id.navigation_audio -> {
           binding.viewPager.setCurrentItem(0, true)
         }
-        R.id.navigation_saved -> {
+        R.id.navigation_video -> {
           binding.viewPager.setCurrentItem(1, true)
         }
       }
