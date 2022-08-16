@@ -1,13 +1,12 @@
 package com.example.boombox.ui.main
 
 import android.app.Application
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.asLiveData
 import com.example.boombox.data.network.BoomboxRepository
+import com.example.boombox.data.network.Resource
 import com.example.boombox.ui.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.flow.flow
 
 import javax.inject.Inject
 
@@ -17,11 +16,12 @@ class MainViewModel @Inject constructor(
   application: Application
 ) : BaseViewModel(repository, application) {
 
-  fun getTracks() = repository.getTracks()
-
-  fun search(q: String = "taylor swift") {
-    viewModelScope.launch {
-      repository.searchTrack(q)
+  fun getTracks(q: String = "taylor swift") = flow {
+    emit(Resource.loading(data = null))
+    try {
+      emit(Resource.success(data = repository.getTracks(q)))
+    } catch (exception: Exception) {
+      emit(Resource.error(data = null, message = exception.message ?: "Error Occurred!"))
     }
-  }
+  }.asLiveData()
 }

@@ -8,6 +8,9 @@ import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.boombox.R
 import com.example.boombox.data.model.Track
+import com.example.boombox.data.network.Status.ERROR
+import com.example.boombox.data.network.Status.LOADING
+import com.example.boombox.data.network.Status.SUCCESS
 import com.example.boombox.databinding.AudioFragmentBinding
 import com.example.boombox.media.AudioPlayerManager
 import com.example.boombox.ui.adapter.TrackAdapter
@@ -34,7 +37,7 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
   }
 
   private fun fetchData() {
-    mainViewModel.search()
+    mainViewModel.getTracks("")
   }
 
   private fun setupRecyclerView() {
@@ -57,8 +60,16 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
 
   override fun setupObserver() {
     mainViewModel.getTracks().observe(this, {
-      it?.let {
-        trackAdapter.setList(it)
+      it?.let { resource ->
+        when (resource.status) {
+          SUCCESS -> {
+            resource.data?.let { tracks -> trackAdapter.setList(tracks.results) }
+          }
+          ERROR -> {
+          }
+          LOADING -> {
+          }
+        }
       }
     })
   }
@@ -71,7 +82,6 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
     popup.setOnMenuItemClickListener {
       when (it.itemId) {
         R.id.add_to_playlist -> {
-
           return@setOnMenuItemClickListener false
         }
       }
