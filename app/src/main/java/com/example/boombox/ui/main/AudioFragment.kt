@@ -1,5 +1,6 @@
 package com.example.boombox.ui.main
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuInflater
 import android.view.View
@@ -28,16 +29,10 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
 
   override fun setupView() {
     setupRecyclerView()
-    setupObserver()
-    fetchData()
   }
 
   override fun getViewBinding(inflater: LayoutInflater): AudioFragmentBinding {
     return AudioFragmentBinding.inflate(inflater)
-  }
-
-  private fun fetchData() {
-    mainViewModel.getTracks("")
   }
 
   private fun setupRecyclerView() {
@@ -63,11 +58,14 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
       it?.let { resource ->
         when (resource.status) {
           SUCCESS -> {
+            Log.d(TAG, "setupObserver: SUCCESS")
             resource.data?.let { tracks -> trackAdapter.setList(tracks.results) }
           }
           ERROR -> {
+            Log.d(TAG, "setupObserver: ERROR")
           }
           LOADING -> {
+            Log.d(TAG, "setupObserver: LOADING")
           }
         }
       }
@@ -113,5 +111,9 @@ class AudioFragment : BaseFragment<AudioFragmentBinding>() {
       track.isPlaying = false
     }
     trackAdapter.notifyDataSetChanged()
+  }
+
+  companion object {
+    private const val TAG = "AudioFragment"
   }
 }
