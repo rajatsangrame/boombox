@@ -6,6 +6,7 @@ import android.view.MenuInflater
 import android.view.View
 import android.widget.PopupMenu
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.boombox.R
 import com.example.boombox.data.model.Track
@@ -18,6 +19,11 @@ import com.example.boombox.ui.adapter.TrackAdapter
 import com.example.boombox.ui.base.BaseFragment
 import com.example.boombox.util.GridItemDecorator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.async
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
 import javax.inject.Inject
 
 @AndroidEntryPoint

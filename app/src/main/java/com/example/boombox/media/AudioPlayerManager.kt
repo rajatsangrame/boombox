@@ -1,41 +1,27 @@
 package com.example.boombox.media
 
 import android.app.PendingIntent
+import com.example.boombox.R
 import android.content.Context
 import android.graphics.Bitmap
-import android.net.Uri
-import android.util.Log
 import androidx.annotation.Nullable
-import com.google.android.exoplayer2.C
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.audio.AudioAttributes
-import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.FileDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import java.io.File
-import com.example.boombox.R
+import com.google.android.exoplayer2.upstream.DefaultDataSource
+import com.google.android.exoplayer2.util.MimeTypes
 import javax.inject.Inject
 import javax.inject.Singleton
+
 
 @Singleton
 class AudioPlayerManager @Inject constructor(private val context: Context) {
 
-  private var player: SimpleExoPlayer? = null
+  private var player: ExoPlayer? = null
   private var currentMedia: Media? = null
   private var notificationManager: PlayerNotificationManager? = null
-  private val simpleCache: SimpleCache by lazy {
-    AudioCache.getInstance(context)
-  }
 
   companion object {
     private const val TAG = "AudioPlayerManager"
@@ -57,29 +43,28 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     play()
   }
 
-  fun getPlayer() = player
-
   private fun initExoPlayer() {
 
     // Stop existing song if playing
     stop()
 
-    player = ExoPlayerFactory.newSimpleInstance(context)
+    player = ExoPlayer.Builder(context)
+      .build()
+
     // Setting for handling the audio focus if any third playing app is playing audio
     // This will automatically done on OS level
     val audioAttributes: AudioAttributes = AudioAttributes.Builder()
       .setUsage(C.USAGE_MEDIA)
-      .setContentType(C.CONTENT_TYPE_MUSIC)
+      .setContentType(C.AUDIO_CONTENT_TYPE_MUSIC)
       .build()
     player?.setAudioAttributes(audioAttributes, true) // handleAudioFocus = true, mind the case here
     player?.addListener(eventListener)
-    notificationManager = PlayerNotificationManager.createWithNotificationChannel(
+    notificationManager = PlayerNotificationManager.Builder(
       context,
-      "GENERAL_CHANNEL",
-      R.string.app_name,
-      R.string.app_name,
-      55, adapter
+      55,
+      context.getString(R.string.app_name)
     )
+      .build()
     notificationManager?.setPlayer(player)
   }
 
@@ -88,10 +73,19 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
    */
   private fun preparePlayer() {
 
-    if (currentMedia?.localUrl == null) {
-      player?.prepare(getCacheMediaSource(currentMedia?.remoteUrl, currentMedia?.cacheKey))
-    } else {
-      player?.prepare(getMediaSourceForLocalFiles(currentMedia?.localUrl))
+    val mediaItem = MediaItem.Builder()
+      .setUri(currentMedia!!.remoteUrl)
+      .setMimeType(MimeTypes.VIDEO_MP43)
+      .build()
+
+    val mediaSource = ProgressiveMediaSource.Factory(
+      DefaultDataSource.Factory(context)
+    ).createMediaSource(mediaItem)
+
+    player?.apply {
+      setMediaSource(mediaSource)
+      seekTo(0) // Start from the beginning
+      prepare() // Change the state from idle.
     }
     player?.playWhenReady = false /* when player.prepare is called it starts playing*/
 
@@ -110,52 +104,6 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
   fun pause() {
     currentMedia?.state?.invoke(STATE_PAUSE)
     player?.playWhenReady = false
-  }
-
-  private fun getMediaSourceForLocalFiles(localUrl: String?): MediaSource? {
-    val f = File(localUrl)
-    val uri = Uri.fromFile(f)
-    val dataSourceFactory: DataSource.Factory = FileDataSourceFactory()
-    return ProgressiveMediaSource.Factory(
-      dataSourceFactory
-    )
-      .createMediaSource(uri)
-  }
-
-  /**
-   * @param mediaUrl : Http url of the media
-   * @param cacheKey : If empty or null this method returns getDefaultMediaSource
-   *
-   * @return MediaSource for ExoPlayer with cache
-   */
-  private fun getCacheMediaSource(
-    mediaUrl: String?,
-    cacheKey: String?
-  ): MediaSource? {
-
-    if (cacheKey == null || cacheKey.isEmpty()) {
-      return getDefaultMediaSource(mediaUrl)
-    }
-
-    val cacheDataSourceFactory =
-      CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory("Exoplayer"))
-    val uri = Uri.parse(mediaUrl)
-    val factory = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
-    factory.setCustomCacheKey(cacheKey)
-    return factory.createMediaSource(uri)
-  }
-
-  private fun getDefaultMediaSource(mediaUrl: String?): MediaSource? {
-
-    val uri = Uri.parse(mediaUrl)
-    val factory = ProgressiveMediaSource.Factory(
-      DefaultDataSourceFactory(
-        context, context.getString(
-          R.string.app_name
-        )
-      )
-    )
-    return factory.createMediaSource(uri)
   }
 
   private fun stop() {
@@ -203,13 +151,7 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     }
   }
 
-  private val eventListener: Player.EventListener = object : Player.EventListener {
-    override fun onTimelineChanged(
-      timeline: Timeline,
-      manifest: Any?,
-      reason: Int
-    ) {
-    }
+  private val eventListener: Player.Listener = object : Player.Listener {
 
     override fun onLoadingChanged(isLoading: Boolean) {
     }
@@ -222,7 +164,8 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     override fun onPositionDiscontinuity(reason: Int) {
     }
 
-    override fun onPlayerError(error: ExoPlaybackException) {
+    override fun onPlayerError(error: PlaybackException) {
+      super.onPlayerError(error)
       stop()
     }
 
