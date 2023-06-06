@@ -31,6 +31,7 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     const val STATE_ENDED = Player.STATE_ENDED //-> 4
     const val STATE_PLAY = 5
     const val STATE_PAUSE = 6
+    const val NOTIFICATION_ID = 99
   }
 
   fun setMedia(media: Media) {
@@ -61,8 +62,8 @@ class AudioPlayerManager @Inject constructor(private val context: Context) {
     player?.addListener(eventListener)
     notificationManager = PlayerNotificationManager.Builder(
       context,
-      55,
-      context.getString(R.string.app_name)
+      NOTIFICATION_ID,
+      context.getString(R.string.notification_channel_id)
     )
       .build()
     notificationManager?.setPlayer(player)

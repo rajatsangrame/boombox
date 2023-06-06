@@ -12,4 +12,8 @@
   <string name="msg_no_internet">Unable to connect internet</string>
   <string name="msg_unable_to_fetch">Unable to fetch data</string>
 
+  <string name="notification_channel_id">BoomBox</string>
+  <string name="notification_channel_music">Music</string>
+  <string name="notification_desc">BoomBox notification channel</string>
+
 </resources>
